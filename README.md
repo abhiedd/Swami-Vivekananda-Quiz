@@ -1,1 +1,61 @@
 # Swami-Vivekananda-Quiz
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Swami Vivekananda Quiz</title>
+<style>
+body{font-family:Arial;background:#0b1020;color:#fff;text-align:center;padding:20px}
+.box{max-width:600px;margin:auto;background:#121a3a;padding:20px;border-radius:12px}
+button{display:block;width:100%;margin:8px 0;padding:12px;border-radius:8px;border:none;background:#2a3a8a;color:#fff;font-size:16px}
+.correct{background:#1f7a3f}
+.wrong{background:#8a2a2a}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h2>Swami Vivekananda – Kids Quiz</h2>
+<p id="q"></p>
+<div id="opts"></div>
+<p id="status"></p>
+<button onclick="next()">Next</button>
+</div>
+
+<script>
+const quiz=[
+["Where was Swami Vivekananda born?",["Kolkata","Delhi","Mumbai","Chennai"],0],
+["What was his birth name?",["Narendranath Datta","Vivek Das","Tagore","Nehru"],0],
+["Who was Sister Nivedita?",["His sister","Queen","His student","Singer"],2],
+["Which organisation did he start?",["Ramakrishna Mission","ISRO","UNESCO","Red Cross"],0],
+["What is celebrated on his birthday?",["Youth Day","Teachers Day","Childrens Day","Republic Day"],0]
+];
+let i=0,score=0;
+
+function load(){
+q.innerText=quiz[i][0];
+opts.innerHTML="";
+quiz[i][1].forEach((t,j)=>{
+let b=document.createElement("button");
+b.innerText=t;
+b.onclick=()=>ans(j,b);
+opts.appendChild(b);
+});
+status.innerText="";
+}
+function ans(j,b){
+let c=quiz[i][2];
+if(j===c){b.className="correct";score++}
+else b.className="wrong";
+status.innerText="Score: "+score;
+}
+function next(){
+i++;
+if(i<quiz.length) load();
+else q.innerText="Quiz done! Score: "+score+"/"+quiz.length;
+}
+load();
+</script>
+
+</body>
+</html>
