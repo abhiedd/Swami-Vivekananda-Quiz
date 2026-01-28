@@ -1,60 +1,714 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Swami Vivekananda Quiz</title>
-<style>
-body{font-family:Arial;background:#0b1020;color:#fff;text-align:center;padding:20px}
-.box{max-width:600px;margin:auto;background:#121a3a;padding:20px;border-radius:12px}
-button{display:block;width:100%;margin:8px 0;padding:12px;border-radius:8px;border:none;background:#2a3a8a;color:#fff;font-size:16px}
-.correct{background:#1f7a3f}
-.wrong{background:#8a2a2a}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Swami Vivekananda – Fun Quiz</title>
+  <style>
+    :root{
+      --bg1:#0b1020; --bg2:#131a3a;
+      --card: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.14);
+      --text:#eef2ff;
+      --muted: rgba(238,242,255,.75);
+      --good:#22c55e; --bad:#ef4444;
+      --accent:#a78bfa; --accent2:#60a5fa;
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      min-height:100vh;
+      display:grid; place-items:center;
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(167,139,250,.28), transparent 60%),
+        radial-gradient(900px 500px at 80% 20%, rgba(96,165,250,.22), transparent 60%),
+        radial-gradient(900px 600px at 50% 90%, rgba(34,197,94,.14), transparent 60%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      padding:18px;
+    }
+    .app{
+      width:min(920px, 100%);
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      backdrop-filter: blur(10px);
+      border-radius:28px;
+      padding:18px;
+      box-shadow: 0 24px 70px rgba(0,0,0,.45);
+    }
+    header{
+      display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      margin-bottom:14px;
+    }
+    .brand{
+      display:flex; gap:12px; align-items:center;
+    }
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      display:grid; place-items:center;
+      background: linear-gradient(135deg, rgba(167,139,250,.9), rgba(96,165,250,.9));
+      box-shadow: 0 12px 25px rgba(0,0,0,.25);
+      font-size:22px;
+    }
+    h1{margin:0; font-size:18px}
+    .sub{margin:2px 0 0; font-size:12px; color:var(--muted)}
+    .pill{
+      display:flex; gap:10px; align-items:center;
+      padding:10px 12px; border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      font-size:12px; color:var(--muted);
+    }
+    .pill b{color:var(--text)}
+    .grid{
+      display:grid; gap:14px;
+      grid-template-columns: 1fr;
+    }
+    @media(min-width:860px){
+      .grid{ grid-template-columns: 1.35fr .65fr; }
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      border-radius: var(--radius);
+      padding:16px;
+    }
+
+    .progressWrap{display:grid; gap:8px}
+    .progressRow{display:flex; justify-content:space-between; font-size:12px; color:var(--muted)}
+    .bar{
+      height:12px; border-radius:999px; overflow:hidden;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+    }
+    .bar > div{
+      height:100%; width:0%;
+      background: linear-gradient(90deg, rgba(167,139,250,.95), rgba(96,165,250,.95));
+      transition: width 250ms ease;
+    }
+
+    .question{
+      font-size:20px; margin: 10px 0 12px;
+      letter-spacing: .2px;
+    }
+    .choices{display:grid; gap:10px}
+    .choice{
+      width:100%;
+      text-align:left;
+      border-radius:18px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.07);
+      padding:12px 12px;
+      color:var(--text);
+      font-size:15px;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    .choice:hover{transform: translateY(-1px); background: rgba(255,255,255,.10)}
+    .choice:disabled{cursor:not-allowed; opacity:.95; transform:none}
+    .choice .tag{
+      position:absolute; right:10px; top:10px;
+      font-size:12px; opacity:.95;
+    }
+
+    .feedback{
+      margin-top:12px;
+      border-radius:18px;
+      padding:12px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      display:none;
+    }
+    .feedback.good{border-color: rgba(34,197,94,.45)}
+    .feedback.bad{border-color: rgba(239,68,68,.45)}
+    .feedbackTitle{font-weight:800}
+    .feedbackSub{font-size:12px; color:var(--muted)}
+
+    .actions{
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:space-between;
+      margin-top:14px;
+    }
+    .btn{
+      border-radius:16px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.08);
+      padding:10px 12px;
+      color:var(--text);
+      cursor:pointer;
+      font-size:13px;
+    }
+    .btn:hover{background: rgba(255,255,255,.10)}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(167,139,250,.95), rgba(96,165,250,.95));
+      border-color: transparent;
+      color:#0b1020;
+      font-weight:800;
+    }
+    .btn:disabled{opacity:.55; cursor:not-allowed}
+
+    .side h2{margin:0 0 6px; font-size:14px}
+    .side p{margin:0; color:var(--muted); font-size:12px}
+    .statRow{
+      display:grid; grid-template-columns: 1fr 1fr; gap:10px;
+      margin-top:12px;
+    }
+    .stat{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      border-radius:18px;
+      padding:12px;
+    }
+    .stat .k{font-size:12px; color:var(--muted)}
+    .stat .v{font-size:18px; font-weight:900; margin-top:4px}
+    .tip{
+      margin-top:12px;
+      border-radius:18px;
+      border:1px dashed rgba(255,255,255,.22);
+      background: rgba(255,255,255,.05);
+      padding:12px;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    /* Certificate modal */
+    .modal{
+      position:fixed; inset:0;
+      display:none; place-items:center;
+      background: rgba(0,0,0,.55);
+      padding:18px;
+      z-index: 50;
+    }
+    .modal .panel{
+      width:min(980px, 100%);
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(10,14,30,.86);
+      backdrop-filter: blur(10px);
+      padding:14px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.6);
+    }
+    .modal header{
+      margin:0; padding:6px 6px 12px;
+    }
+    .canvasWrap{
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      overflow:hidden;
+    }
+    canvas{width:100%; height:auto; display:block}
+    .modalActions{
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:space-between;
+      padding:12px 6px 6px;
+    }
+
+    /* Confetti */
+    .confetti{
+      position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index: 40;
+    }
+    .confetti i{
+      position:absolute; top:-20px;
+      width:10px; height:16px;
+      background: rgba(255,255,255,.9);
+      border-radius:3px;
+      animation: fall linear forwards;
+      opacity:.9;
+    }
+    @keyframes fall{
+      to{ transform: translateY(110vh) rotate(540deg); opacity: 1; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="box">
-<h2>Swami Vivekananda – Kids Quiz</h2>
-<p id="q"></p>
-<div id="opts"></div>
-<p id="status"></p>
-<button onclick="next()">Next</button>
+<div class="confetti" id="confetti"></div>
+
+<div class="app">
+  <header>
+    <div class="brand">
+      <div class="logo">🧠</div>
+      <div>
+        <h1>Swami Vivekananda – Fun Kids Quiz</h1>
+        <div class="sub">Tap an answer • earn a certificate • share your score</div>
+      </div>
+    </div>
+    <div class="pill">
+      <span>Score</span> <b id="scoreNow">0</b>/<span id="totalNow">15</span> •
+      <span>Q</span> <b id="qNow">1</b>/<span id="qTotal">15</span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <main class="card">
+      <div class="progressWrap">
+        <div class="progressRow">
+          <div id="progressText">Let’s begin! 🚀</div>
+          <div><span id="correctNow">0</span> correct ✅</div>
+        </div>
+        <div class="bar"><div id="barFill"></div></div>
+      </div>
+
+      <div class="question" id="questionText"></div>
+      <div class="choices" id="choices"></div>
+
+      <div class="feedback" id="feedbackBox">
+        <div class="feedbackTitle" id="feedbackTitle"></div>
+        <div class="feedbackSub" id="feedbackSub"></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="restartBtn">Restart</button>
+        <div style="display:flex; gap:10px;">
+          <button class="btn" id="hintBtn" title="Show the correct answer">Hint 💡</button>
+          <button class="btn primary" id="nextBtn" disabled>Next ➜</button>
+        </div>
+      </div>
+    </main>
+
+    <aside class="card side">
+      <h2>✨ How it works</h2>
+      <p>Answer 15 questions. At the end you’ll get a certificate you can download and share.</p>
+
+      <div class="statRow">
+        <div class="stat">
+          <div class="k">Your score</div>
+          <div class="v" id="scoreBig">0</div>
+        </div>
+        <div class="stat">
+          <div class="k">Best badge</div>
+          <div class="v" id="badge">—</div>
+        </div>
+      </div>
+
+      <div class="tip">
+        Tip: Ask kids to use their full name at the end to print it on the certificate 🏅
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- Certificate Modal -->
+<div class="modal" id="certModal">
+  <div class="panel">
+    <header>
+      <div style="display:flex; gap:10px; justify-content:space-between; align-items:center;">
+        <div style="display:grid; gap:2px;">
+          <div style="font-weight:900;">🎓 Your Certificate</div>
+          <div style="font-size:12px; color:rgba(238,242,255,.75);">Download as PNG or share directly</div>
+        </div>
+        <button class="btn" id="closeCert">Close ✕</button>
+      </div>
+    </header>
+
+    <div class="canvasWrap">
+      <canvas id="certCanvas" width="1400" height="900"></canvas>
+    </div>
+
+    <div class="modalActions">
+      <button class="btn" id="editNameBtn">Edit Name ✍️</button>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn" id="downloadCert">Download PNG ⬇️</button>
+        <button class="btn primary" id="shareCert">Share 📤</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-const quiz=[
-["Where was Swami Vivekananda born?",["Kolkata","Delhi","Mumbai","Chennai"],0],
-["What was his birth name?",["Narendranath Datta","Vivek Das","Tagore","Nehru"],0],
-["Who was Sister Nivedita?",["His sister","Queen","His student","Singer"],2],
-["Which organisation did he start?",["Ramakrishna Mission","ISRO","UNESCO","Red Cross"],0],
-["What is celebrated on his birthday?",["Youth Day","Teachers Day","Childrens Day","Republic Day"],0]
-];
-let i=0,score=0;
+  // 15 kid-friendly questions (correct answers match what we used earlier)
+  const QUESTIONS = [
+    { q:"Where was Swami Vivekananda born?", c:["Kolkata","Delhi","Mumbai","Chennai"], a:0 },
+    { q:"What was Swami Vivekananda’s name at birth?", c:["Narendranath Datta","Vivek Das","Ramakrishna Das","Rabindranath Sen"], a:0 },
+    { q:"Who was Sister Nivedita?", c:["His sister","A queen","His student who helped people in India","A musician"], a:2 },
+    { q:"Which organization did Swami Vivekananda start?", c:["Ramakrishna Mission","ISRO","UNESCO","Red Cross"], a:0 },
+    { q:"Who was Swami Vivekananda’s guru (teacher)?", c:["Sri Ramakrishna Paramahamsa","Mahatma Gandhi","Rabindranath Tagore","Jawaharlal Nehru"], a:0 },
+    { q:"Which book has his speeches and writings?", c:["The Complete Works of Swami Vivekananda","Ramayana","Panchatantra","Discovery of India"], a:0 },
+    { q:"In which year did he pass away?", c:["1902","1893","1915","1947"], a:0 },
+    { q:"How old was he when he passed away?", c:["39 years","30 years","45 years","55 years"], a:0 },
+    { q:"Where is the Vivekananda Rock Memorial?", c:["Kanyakumari, Tamil Nadu","Kolkata, West Bengal","Jaipur, Rajasthan","Bhopal, Madhya Pradesh"], a:0 },
+    { q:"Which Indian philosophy did he teach to the world?", c:["Vedanta","Stoicism","Confucianism","Existentialism"], a:0 },
+    { q:"Which message did he give to young people?", c:["Arise, awake, and stop not till the goal is reached","Never try anything new","Only luck matters","Avoid hard work"], a:0 },
+    { q:"Which country did he visit to give famous speeches?", c:["United States of America","Australia","Brazil","South Africa"], a:0 },
+    { q:"What is celebrated on his birthday (12 January) in India?", c:["National Youth Day","Children’s Day","Teacher’s Day","Republic Day"], a:0 },
+    { q:"What were the names of his parents?", c:["Bhuvaneshwari Devi and Vishwanath Datta","Kasturba and Mohandas Gandhi","Indira and Feroze Gandhi","Sarojini and Govindarajulu Naidu"], a:0 },
+    { q:"Which song was written by Swami Vivekananda?", c:["Khandana Bhava Bandhana","Vande Mataram","Jana Gana Mana","Raghupati Raghav"], a:0 }
+  ];
 
-function load(){
-q.innerText=quiz[i][0];
-opts.innerHTML="";
-quiz[i][1].forEach((t,j)=>{
-let b=document.createElement("button");
-b.innerText=t;
-b.onclick=()=>ans(j,b);
-opts.appendChild(b);
-});
-status.innerText="";
-}
-function ans(j,b){
-let c=quiz[i][2];
-if(j===c){b.className="correct";score++}
-else b.className="wrong";
-status.innerText="Score: "+score;
-}
-function next(){
-i++;
-if(i<quiz.length) load();
-else q.innerText="Quiz done! Score: "+score+"/"+quiz.length;
-}
-load();
+  // Elements
+  const totalNow = document.getElementById("totalNow");
+  const qTotal = document.getElementById("qTotal");
+  const qNow = document.getElementById("qNow");
+  const scoreNow = document.getElementById("scoreNow");
+  const correctNow = document.getElementById("correctNow");
+  const scoreBig = document.getElementById("scoreBig");
+  const badgeEl = document.getElementById("badge");
+  const progressText = document.getElementById("progressText");
+  const barFill = document.getElementById("barFill");
+  const questionText = document.getElementById("questionText");
+  const choices = document.getElementById("choices");
+  const feedbackBox = document.getElementById("feedbackBox");
+  const feedbackTitle = document.getElementById("feedbackTitle");
+  const feedbackSub = document.getElementById("feedbackSub");
+  const nextBtn = document.getElementById("nextBtn");
+  const restartBtn = document.getElementById("restartBtn");
+  const hintBtn = document.getElementById("hintBtn");
+
+  const confetti = document.getElementById("confetti");
+
+  // Certificate
+  const certModal = document.getElementById("certModal");
+  const certCanvas = document.getElementById("certCanvas");
+  const ctx = certCanvas.getContext("2d");
+  const closeCert = document.getElementById("closeCert");
+  const downloadCert = document.getElementById("downloadCert");
+  const shareCert = document.getElementById("shareCert");
+  const editNameBtn = document.getElementById("editNameBtn");
+
+  // State
+  let order = [];
+  let idx = 0;
+  let score = 0;
+  let answered = false;
+  let playerName = localStorage.getItem("svq_name") || "Young Champion";
+
+  totalNow.textContent = QUESTIONS.length;
+  qTotal.textContent = QUESTIONS.length;
+
+  function shuffle(a){
+    const x = a.slice();
+    for(let i=x.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [x[i], x[j]] = [x[j], x[i]];
+    }
+    return x;
+  }
+
+  function badgeFor(pct){
+    if(pct >= 90) return "🌟 Star";
+    if(pct >= 70) return "🏅 Achiever";
+    if(pct >= 50) return "💪 Try-Hard";
+    return "🚀 Starter";
+  }
+
+  function reset(){
+    order = shuffle([...Array(QUESTIONS.length).keys()]);
+    idx = 0;
+    score = 0;
+    answered = false;
+    updateTop();
+    render();
+  }
+
+  function updateTop(){
+    scoreNow.textContent = score;
+    correctNow.textContent = score;
+    scoreBig.textContent = score;
+    qNow.textContent = Math.min(idx+1, QUESTIONS.length);
+    const pct = Math.round((score/QUESTIONS.length)*100);
+    badgeEl.textContent = badgeFor(pct);
+  }
+
+  function render(){
+    answered = false;
+    nextBtn.disabled = true;
+    feedbackBox.style.display = "none";
+    feedbackBox.classList.remove("good","bad");
+
+    const q = QUESTIONS[order[idx]];
+    questionText.textContent = q.q;
+
+    choices.innerHTML = "";
+    q.c.forEach((t, i)=>{
+      const b = document.createElement("button");
+      b.className = "choice";
+      b.innerHTML = `<span>${t}</span>`;
+      b.addEventListener("click", ()=>choose(i));
+      choices.appendChild(b);
+    });
+
+    const pct = Math.round((idx/QUESTIONS.length)*100);
+    barFill.style.width = pct + "%";
+    progressText.textContent = `Question ${idx+1} of ${QUESTIONS.length} 🎯`;
+    updateTop();
+  }
+
+  function lockChoices(){
+    [...choices.querySelectorAll(".choice")].forEach(b=>b.disabled=true);
+  }
+
+  function choose(choiceIndex){
+    if(answered) return;
+    answered = true;
+    lockChoices();
+
+    const q = QUESTIONS[order[idx]];
+    const ok = (choiceIndex === q.a);
+    if(ok) score++;
+
+    // Mark buttons
+    const btns = [...choices.querySelectorAll(".choice")];
+    btns.forEach((b, i)=>{
+      if(i === q.a){
+        b.style.borderColor = "rgba(34,197,94,.7)";
+        b.style.background = "rgba(34,197,94,.12)";
+        b.innerHTML = `${q.c[i]} <span class="tag">✅</span>`;
+      }
+      if(i === choiceIndex && !ok){
+        b.style.borderColor = "rgba(239,68,68,.7)";
+        b.style.background = "rgba(239,68,68,.12)";
+        b.innerHTML = `${q.c[i]} <span class="tag">❌</span>`;
+      }
+    });
+
+    feedbackBox.style.display = "block";
+    feedbackBox.classList.add(ok ? "good":"bad");
+    feedbackTitle.textContent = ok ? "Correct! 🎉" : "Oops! Not this one 😅";
+    feedbackSub.textContent = ok ? "Great job—keep going!" : `Correct answer: ${q.c[q.a]}`;
+
+    nextBtn.disabled = false;
+    nextBtn.textContent = (idx === QUESTIONS.length-1) ? "Finish 🎓" : "Next ➜";
+
+    updateTop();
+  }
+
+  function hint(){
+    if(answered) return;
+    const q = QUESTIONS[order[idx]];
+    feedbackBox.style.display = "block";
+    feedbackBox.classList.remove("bad");
+    feedbackBox.classList.add("good");
+    feedbackTitle.textContent = "Hint 💡";
+    feedbackSub.textContent = `Look for: ${q.c[q.a]}`;
+    // Soft highlight
+    const btns = [...choices.querySelectorAll(".choice")];
+    btns[q.a].style.borderColor = "rgba(238,242,255,.55)";
+    btns[q.a].style.background = "rgba(238,242,255,.10)";
+  }
+
+  function next(){
+    if(!answered) return;
+    if(idx < QUESTIONS.length-1){
+      idx++;
+      render();
+    } else {
+      finish();
+    }
+  }
+
+  function spawnConfetti(){
+    confetti.innerHTML = "";
+    const pieces = 120;
+    for(let i=0;i<pieces;i++){
+      const el = document.createElement("i");
+      const left = Math.random()*100;
+      const dur = 2.2 + Math.random()*1.8;
+      const delay = Math.random()*0.25;
+      const size = 8 + Math.random()*10;
+      el.style.left = left + "vw";
+      el.style.width = (size*0.55) + "px";
+      el.style.height = size + "px";
+      el.style.animationDuration = dur + "s";
+      el.style.animationDelay = delay + "s";
+      el.style.transform = `translateY(-30px) rotate(${Math.random()*180}deg)`;
+      el.style.background = `hsla(${Math.floor(Math.random()*360)}, 90%, 70%, .95)`;
+      confetti.appendChild(el);
+    }
+    setTimeout(()=>{ confetti.innerHTML=""; }, 4200);
+  }
+
+  function finish(){
+    barFill.style.width = "100%";
+    spawnConfetti();
+
+    const pct = Math.round((score/QUESTIONS.length)*100);
+    const badge = badgeFor(pct);
+
+    // Ask for name (once)
+    const name = prompt("🎓 Enter your name for the certificate:", playerName) || playerName;
+    playerName = name.trim() ? name.trim() : "Young Champion";
+    localStorage.setItem("svq_name", playerName);
+
+    // Show certificate modal
+    drawCertificate({ name: playerName, score, total: QUESTIONS.length, pct, badge });
+    certModal.style.display = "grid";
+  }
+
+  function drawCertificate({name, score, total, pct, badge}){
+    // Background
+    ctx.clearRect(0,0,certCanvas.width, certCanvas.height);
+
+    // Gradient bg
+    const g = ctx.createLinearGradient(0,0,certCanvas.width, certCanvas.height);
+    g.addColorStop(0, "#0b1020");
+    g.addColorStop(1, "#1b2452");
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,certCanvas.width, certCanvas.height);
+
+    // Decorative blobs
+    blob(220, 170, 280, "rgba(167,139,250,.40)");
+    blob(1180, 180, 310, "rgba(96,165,250,.35)");
+    blob(1050, 740, 360, "rgba(34,197,94,.22)");
+
+    // Card
+    roundRect(90, 90, 1220, 720, 34, "rgba(255,255,255,.08)", "rgba(255,255,255,.18)");
+
+    // Title
+    ctx.fillStyle = "rgba(238,242,255,.98)";
+    ctx.font = "900 58px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillText("Certificate of Completion", 160, 190);
+
+    // Subtitle
+    ctx.fillStyle = "rgba(238,242,255,.78)";
+    ctx.font = "400 26px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillText("Swami Vivekananda – Fun Kids Quiz", 160, 235);
+
+    // Name
+    ctx.fillStyle = "rgba(238,242,255,.98)";
+    ctx.font = "900 64px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillText(name, 160, 340);
+
+    // Line
+    ctx.strokeStyle = "rgba(255,255,255,.20)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(160, 365);
+    ctx.lineTo(1240, 365);
+    ctx.stroke();
+
+    // Score
+    ctx.fillStyle = "rgba(238,242,255,.92)";
+    ctx.font = "700 34px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillText(`Score: ${score}/${total}   (${pct}%)`, 160, 440);
+
+    // Badge
+    ctx.font = "800 34px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillText(`Badge: ${badge}`, 160, 490);
+
+    // Quote
+    ctx.fillStyle = "rgba(238,242,255,.78)";
+    ctx.font = "500 26px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillText("“Arise, awake, and stop not till the goal is reached.”", 160, 570);
+
+    // Footer
+    const dateStr = new Date().toLocaleDateString(undefined, { year:"numeric", month:"short", day:"numeric" });
+    ctx.fillStyle = "rgba(238,242,255,.70)";
+    ctx.font = "500 22px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillText(`Date: ${dateStr}`, 160, 650);
+
+    // Seal
+    seal(1080, 545, 135, badge, pct);
+
+    // Small note
+    ctx.fillStyle = "rgba(238,242,255,.55)";
+    ctx.font = "500 18px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillText("Generated by your class quiz app • Share & celebrate learning!", 160, 720);
+  }
+
+  function roundRect(x,y,w,h,r,fill,stroke){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+    if(fill){ ctx.fillStyle = fill; ctx.fill(); }
+    if(stroke){ ctx.strokeStyle = stroke; ctx.lineWidth = 2; ctx.stroke(); }
+  }
+
+  function blob(cx,cy,rad,color){
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.ellipse(cx,cy,rad,rad*0.8, 0, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  function seal(cx,cy,r, badge, pct){
+    // outer ring
+    ctx.beginPath();
+    ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.fillStyle = "rgba(167,139,250,.22)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,.20)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // inner
+    ctx.beginPath();
+    ctx.arc(cx,cy,r*0.72,0,Math.PI*2);
+    ctx.fillStyle = "rgba(255,255,255,.08)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,.18)";
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(238,242,255,.95)";
+    ctx.font = "900 30px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("QUIZ", cx, cy-10);
+    ctx.font = "800 26px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillText(`${pct}%`, cx, cy+26);
+    ctx.textAlign = "left";
+  }
+
+  function dataURLToBlob(dataURL){
+    const parts = dataURL.split(",");
+    const mime = parts[0].match(/:(.*?);/)[1];
+    const bstr = atob(parts[1]);
+    let n = bstr.length;
+    const u8 = new Uint8Array(n);
+    while(n--) u8[n] = bstr.charCodeAt(n);
+    return new Blob([u8], {type:mime});
+  }
+
+  async function shareCertificate(){
+    const dataURL = certCanvas.toDataURL("image/png");
+    const blob = dataURLToBlob(dataURL);
+    const file = new File([blob], "Vivekananda-Quiz-Certificate.png", { type:"image/png" });
+
+    const shareText = `I scored ${score}/${QUESTIONS.length} in the Swami Vivekananda Quiz! 🎉`;
+
+    if(navigator.share && navigator.canShare && navigator.canShare({ files:[file] })){
+      await navigator.share({
+        title: "Swami Vivekananda Quiz Certificate",
+        text: shareText,
+        files: [file]
+      });
+    } else {
+      // Fallback: download if share not supported
+      downloadCertificate();
+      alert("Sharing isn’t supported on this phone/browser. I downloaded the certificate instead ✅");
+    }
+  }
+
+  function downloadCertificate(){
+    const link = document.createElement("a");
+    link.download = "Vivekananda-Quiz-Certificate.png";
+    link.href = certCanvas.toDataURL("image/png");
+    link.click();
+  }
+
+  // Events
+  nextBtn.addEventListener("click", next);
+  restartBtn.addEventListener("click", reset);
+  hintBtn.addEventListener("click", hint);
+
+  closeCert.addEventListener("click", ()=>{ certModal.style.display = "none"; reset(); });
+  downloadCert.addEventListener("click", downloadCertificate);
+  shareCert.addEventListener("click", ()=>shareCertificate().catch(()=>{}));
+  editNameBtn.addEventListener("click", ()=>{
+    const name = prompt("Enter name for certificate:", playerName) || playerName;
+    playerName = name.trim() ? name.trim() : "Young Champion";
+    localStorage.setItem("svq_name", playerName);
+    const pct = Math.round((score/QUESTIONS.length)*100);
+    drawCertificate({ name: playerName, score, total: QUESTIONS.length, pct, badge: badgeFor(pct) });
+  });
+
+  // Start
+  reset();
 </script>
-
 </body>
 </html>
