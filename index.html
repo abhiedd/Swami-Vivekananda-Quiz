@@ -7,7 +7,6 @@
   <style>
     :root{
       --bg1:#0b1020; --bg2:#131a3a;
-      --card: rgba(255,255,255,.08);
       --stroke: rgba(255,255,255,.14);
       --text:#eef2ff;
       --muted: rgba(238,242,255,.75);
@@ -41,9 +40,7 @@
       display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
       margin-bottom:14px;
     }
-    .brand{
-      display:flex; gap:12px; align-items:center;
-    }
+    .brand{display:flex; gap:12px; align-items:center;}
     .logo{
       width:44px; height:44px; border-radius:14px;
       display:grid; place-items:center;
@@ -53,21 +50,39 @@
     }
     h1{margin:0; font-size:18px}
     .sub{margin:2px 0 0; font-size:12px; color:var(--muted)}
+
+    .topRight{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;}
     .pill{
       display:flex; gap:10px; align-items:center;
       padding:10px 12px; border-radius:999px;
       border:1px solid var(--stroke);
       background: rgba(255,255,255,.06);
       font-size:12px; color:var(--muted);
+      user-select:none;
     }
     .pill b{color:var(--text)}
-    .grid{
-      display:grid; gap:14px;
-      grid-template-columns: 1fr;
+    .toggleBtn{
+      display:flex; gap:8px; align-items:center;
+      cursor:pointer;
     }
-    @media(min-width:860px){
-      .grid{ grid-template-columns: 1.35fr .65fr; }
+    .switch{
+      width:44px; height:24px; border-radius:999px;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.18);
+      position:relative;
     }
+    .knob{
+      width:18px; height:18px; border-radius:999px;
+      position:absolute; top:50%; transform: translateY(-50%);
+      left:3px;
+      background: rgba(238,242,255,.92);
+      transition: left 160ms ease;
+    }
+    .switch.on{background: rgba(34,197,94,.22); border-color: rgba(34,197,94,.28);}
+    .switch.on .knob{left:23px;}
+
+    .grid{display:grid; gap:14px; grid-template-columns: 1fr;}
+    @media(min-width:860px){ .grid{ grid-template-columns: 1.35fr .65fr; } }
 
     .card{
       border:1px solid var(--stroke);
@@ -75,7 +90,6 @@
       border-radius: var(--radius);
       padding:16px;
     }
-
     .progressWrap{display:grid; gap:8px}
     .progressRow{display:flex; justify-content:space-between; font-size:12px; color:var(--muted)}
     .bar{
@@ -89,10 +103,7 @@
       transition: width 250ms ease;
     }
 
-    .question{
-      font-size:20px; margin: 10px 0 12px;
-      letter-spacing: .2px;
-    }
+    .question{font-size:20px; margin: 10px 0 12px; letter-spacing: .2px;}
     .choices{display:grid; gap:10px}
     .choice{
       width:100%;
@@ -110,10 +121,7 @@
     }
     .choice:hover{transform: translateY(-1px); background: rgba(255,255,255,.10)}
     .choice:disabled{cursor:not-allowed; opacity:.95; transform:none}
-    .choice .tag{
-      position:absolute; right:10px; top:10px;
-      font-size:12px; opacity:.95;
-    }
+    .choice .tag{position:absolute; right:10px; top:10px; font-size:12px; opacity:.95;}
 
     .feedback{
       margin-top:12px;
@@ -152,10 +160,7 @@
 
     .side h2{margin:0 0 6px; font-size:14px}
     .side p{margin:0; color:var(--muted); font-size:12px}
-    .statRow{
-      display:grid; grid-template-columns: 1fr 1fr; gap:10px;
-      margin-top:12px;
-    }
+    .statRow{display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px;}
     .stat{
       border:1px solid var(--stroke);
       background: rgba(255,255,255,.06);
@@ -164,6 +169,26 @@
     }
     .stat .k{font-size:12px; color:var(--muted)}
     .stat .v{font-size:18px; font-weight:900; margin-top:4px}
+
+    .avatarBadge{
+      display:flex; gap:10px; align-items:center;
+      margin-top:12px;
+      padding:12px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+    }
+    .avatar{
+      width:54px; height:54px; border-radius:18px;
+      display:grid; place-items:center;
+      font-size:28px;
+      background: linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border:1px solid rgba(255,255,255,.14);
+    }
+    .avatarMeta{display:grid; gap:2px;}
+    .avatarMeta .t{font-weight:900; font-size:14px;}
+    .avatarMeta .s{font-size:12px; color:var(--muted);}
+
     .tip{
       margin-top:12px;
       border-radius:18px;
@@ -173,6 +198,12 @@
       color:var(--muted);
       font-size:12px;
     }
+
+    /* Results */
+    .results{display:none; text-align:center}
+    .results h2{margin:10px 0 6px}
+    .results .scoreLine{color:rgba(238,242,255,.88); margin-bottom:12px}
+    .results .actions{justify-content:center}
 
     /* Certificate modal */
     .modal{
@@ -191,9 +222,6 @@
       padding:14px;
       box-shadow: 0 30px 80px rgba(0,0,0,.6);
     }
-    .modal header{
-      margin:0; padding:6px 6px 12px;
-    }
     .canvasWrap{
       border-radius: 18px;
       border: 1px solid rgba(255,255,255,.14);
@@ -207,13 +235,10 @@
     }
 
     /* Confetti */
-    .confetti{
-      position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index: 40;
-    }
+    .confetti{position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index: 40;}
     .confetti i{
       position:absolute; top:-20px;
       width:10px; height:16px;
-      background: rgba(255,255,255,.9);
       border-radius:3px;
       animation: fall linear forwards;
       opacity:.9;
@@ -233,17 +258,28 @@
       <div class="logo">🧠</div>
       <div>
         <h1>Swami Vivekananda – Fun Kids Quiz</h1>
-        <div class="sub">Tap an answer • earn a certificate • share your score</div>
+        <div class="sub">Tap an answer • sound on/off • score → certificate</div>
       </div>
     </div>
-    <div class="pill">
-      <span>Score</span> <b id="scoreNow">0</b>/<span id="totalNow">15</span> •
-      <span>Q</span> <b id="qNow">1</b>/<span id="qTotal">15</span>
+
+    <div class="topRight">
+      <div class="pill">
+        <span>Score</span> <b id="scoreNow">0</b>/<span id="totalNow">15</span> •
+        <span>Q</span> <b id="qNow">1</b>/<span id="qTotal">15</span>
+      </div>
+
+      <div class="pill toggleBtn" id="soundToggle" title="Sound effects">
+        <span id="soundIcon">🔇</span>
+        <span>Sound</span>
+        <div class="switch" id="switch">
+          <div class="knob"></div>
+        </div>
+      </div>
     </div>
   </header>
 
   <div class="grid">
-    <main class="card">
+    <main class="card" id="quizCard">
       <div class="progressWrap">
         <div class="progressRow">
           <div id="progressText">Let’s begin! 🚀</div>
@@ -263,15 +299,15 @@
       <div class="actions">
         <button class="btn" id="restartBtn">Restart</button>
         <div style="display:flex; gap:10px;">
-          <button class="btn" id="hintBtn" title="Show the correct answer">Hint 💡</button>
+          <button class="btn" id="hintBtn" title="Show a hint">Hint 💡</button>
           <button class="btn primary" id="nextBtn" disabled>Next ➜</button>
         </div>
       </div>
     </main>
 
     <aside class="card side">
-      <h2>✨ How it works</h2>
-      <p>Answer 15 questions. At the end you’ll get a certificate you can download and share.</p>
+      <h2>✨ Your Badge</h2>
+      <p>Badge updates based on your score. Keep going! 💪</p>
 
       <div class="statRow">
         <div class="stat">
@@ -279,30 +315,46 @@
           <div class="v" id="scoreBig">0</div>
         </div>
         <div class="stat">
-          <div class="k">Best badge</div>
+          <div class="k">Badge</div>
           <div class="v" id="badge">—</div>
         </div>
       </div>
 
+      <div class="avatarBadge">
+        <div class="avatar" id="avatar">🙂</div>
+        <div class="avatarMeta">
+          <div class="t" id="avatarTitle">Starter</div>
+          <div class="s" id="avatarSub">Let’s warm up!</div>
+        </div>
+      </div>
+
       <div class="tip">
-        Tip: Ask kids to use their full name at the end to print it on the certificate 🏅
+        Tip: Sound on works best after you tap once (phone browser rule) 🔊
       </div>
     </aside>
+  </div>
+
+  <!-- Results screen -->
+  <div class="card results" id="resultsCard">
+    <h2>🎉 Quiz Complete!</h2>
+    <div class="scoreLine" id="scoreLine"></div>
+    <div class="actions">
+      <button class="btn" id="playAgainBtn">Play Again</button>
+      <button class="btn primary" id="getCertBtn">Get Certificate 🎓</button>
+    </div>
   </div>
 </div>
 
 <!-- Certificate Modal -->
 <div class="modal" id="certModal">
   <div class="panel">
-    <header>
-      <div style="display:flex; gap:10px; justify-content:space-between; align-items:center;">
-        <div style="display:grid; gap:2px;">
-          <div style="font-weight:900;">🎓 Your Certificate</div>
-          <div style="font-size:12px; color:rgba(238,242,255,.75);">Download as PNG or share directly</div>
-        </div>
-        <button class="btn" id="closeCert">Close ✕</button>
+    <div style="display:flex; justify-content:space-between; gap:10px; align-items:center; padding:6px 6px 12px;">
+      <div style="display:grid; gap:2px;">
+        <div style="font-weight:900;">🎓 Certificate</div>
+        <div style="font-size:12px; color:rgba(238,242,255,.75);">Download PNG or Share</div>
       </div>
-    </header>
+      <button class="btn" id="closeCert">Close ✕</button>
+    </div>
 
     <div class="canvasWrap">
       <canvas id="certCanvas" width="1400" height="900"></canvas>
@@ -319,23 +371,23 @@
 </div>
 
 <script>
-  // 15 kid-friendly questions (correct answers match what we used earlier)
+  // --- Questions (answers are mixed across A/B/C/D) ---
   const QUESTIONS = [
-    { q:"Where was Swami Vivekananda born?", c:["Kolkata","Delhi","Mumbai","Chennai"], a:0 },
-    { q:"What was Swami Vivekananda’s name at birth?", c:["Narendranath Datta","Vivek Das","Ramakrishna Das","Rabindranath Sen"], a:0 },
-    { q:"Who was Sister Nivedita?", c:["His sister","A queen","His student who helped people in India","A musician"], a:2 },
-    { q:"Which organization did Swami Vivekananda start?", c:["Ramakrishna Mission","ISRO","UNESCO","Red Cross"], a:0 },
-    { q:"Who was Swami Vivekananda’s guru (teacher)?", c:["Sri Ramakrishna Paramahamsa","Mahatma Gandhi","Rabindranath Tagore","Jawaharlal Nehru"], a:0 },
-    { q:"Which book has his speeches and writings?", c:["The Complete Works of Swami Vivekananda","Ramayana","Panchatantra","Discovery of India"], a:0 },
-    { q:"In which year did he pass away?", c:["1902","1893","1915","1947"], a:0 },
-    { q:"How old was he when he passed away?", c:["39 years","30 years","45 years","55 years"], a:0 },
-    { q:"Where is the Vivekananda Rock Memorial?", c:["Kanyakumari, Tamil Nadu","Kolkata, West Bengal","Jaipur, Rajasthan","Bhopal, Madhya Pradesh"], a:0 },
-    { q:"Which Indian philosophy did he teach to the world?", c:["Vedanta","Stoicism","Confucianism","Existentialism"], a:0 },
-    { q:"Which message did he give to young people?", c:["Arise, awake, and stop not till the goal is reached","Never try anything new","Only luck matters","Avoid hard work"], a:0 },
-    { q:"Which country did he visit to give famous speeches?", c:["United States of America","Australia","Brazil","South Africa"], a:0 },
-    { q:"What is celebrated on his birthday (12 January) in India?", c:["National Youth Day","Children’s Day","Teacher’s Day","Republic Day"], a:0 },
-    { q:"What were the names of his parents?", c:["Bhuvaneshwari Devi and Vishwanath Datta","Kasturba and Mohandas Gandhi","Indira and Feroze Gandhi","Sarojini and Govindarajulu Naidu"], a:0 },
-    { q:"Which song was written by Swami Vivekananda?", c:["Khandana Bhava Bandhana","Vande Mataram","Jana Gana Mana","Raghupati Raghav"], a:0 }
+    { q:"Where was Swami Vivekananda born?", c:["Delhi","Kolkata","Mumbai","Chennai"], a:1 },
+    { q:"What was Swami Vivekananda’s name at birth?", c:["Vivek Das","Ramakrishna Das","Narendranath Datta","Rabindranath Sen"], a:2 },
+    { q:"Who was Sister Nivedita?", c:["A musician","His student who helped people in India","A queen","His sister"], a:1 },
+    { q:"Which organization did Swami Vivekananda start?", c:["UNESCO","ISRO","Ramakrishna Mission","Red Cross"], a:2 },
+    { q:"Who was Swami Vivekananda’s guru (teacher)?", c:["Jawaharlal Nehru","Rabindranath Tagore","Sri Ramakrishna Paramahamsa","Mahatma Gandhi"], a:2 },
+    { q:"Which book has his speeches and writings?", c:["Panchatantra","The Complete Works of Swami Vivekananda","Ramayana","Discovery of India"], a:1 },
+    { q:"In which year did he pass away?", c:["1893","1915","1947","1902"], a:3 },
+    { q:"How old was he when he passed away?", c:["45 years","39 years","55 years","30 years"], a:1 },
+    { q:"Where is the Vivekananda Rock Memorial?", c:["Jaipur, Rajasthan","Kanyakumari, Tamil Nadu","Bhopal, Madhya Pradesh","Kolkata, West Bengal"], a:1 },
+    { q:"Which Indian philosophy did he teach to the world?", c:["Confucianism","Vedanta","Existentialism","Stoicism"], a:1 },
+    { q:"Which message did he give to young people?", c:["Only luck matters","Arise, awake, and stop not till the goal is reached","Avoid hard work","Never try anything new"], a:1 },
+    { q:"Which country did he visit to give famous speeches?", c:["Brazil","South Africa","United States of America","Australia"], a:2 },
+    { q:"What is celebrated on his birthday (12 January) in India?", c:["Teacher’s Day","Republic Day","National Youth Day","Children’s Day"], a:2 },
+    { q:"What were the names of his parents?", c:["Sarojini and Govindarajulu Naidu","Bhuvaneshwari Devi and Vishwanath Datta","Indira and Feroze Gandhi","Kasturba and Mohandas Gandhi"], a:1 },
+    { q:"Which song was written by Swami Vivekananda?", c:["Jana Gana Mana","Khandana Bhava Bandhana","Vande Mataram","Raghupati Raghav"], a:1 }
   ];
 
   // Elements
@@ -357,7 +409,23 @@
   const restartBtn = document.getElementById("restartBtn");
   const hintBtn = document.getElementById("hintBtn");
 
+  const quizCard = document.getElementById("quizCard");
+  const resultsCard = document.getElementById("resultsCard");
+  const scoreLine = document.getElementById("scoreLine");
+  const playAgainBtn = document.getElementById("playAgainBtn");
+  const getCertBtn = document.getElementById("getCertBtn");
+
   const confetti = document.getElementById("confetti");
+
+  // Avatar badge
+  const avatar = document.getElementById("avatar");
+  const avatarTitle = document.getElementById("avatarTitle");
+  const avatarSub = document.getElementById("avatarSub");
+
+  // Sound toggle
+  const soundToggle = document.getElementById("soundToggle");
+  const soundIcon = document.getElementById("soundIcon");
+  const switchEl = document.getElementById("switch");
 
   // Certificate
   const certModal = document.getElementById("certModal");
@@ -373,7 +441,11 @@
   let idx = 0;
   let score = 0;
   let answered = false;
-  let playerName = localStorage.getItem("svq_name") || "Young Champion";
+  let playerName = localStorage.getItem("svq_name") || "";
+
+  // Sound state
+  let soundOn = localStorage.getItem("svq_sound") === "1";
+  let audioCtx = null;
 
   totalNow.textContent = QUESTIONS.length;
   qTotal.textContent = QUESTIONS.length;
@@ -388,19 +460,19 @@
   }
 
   function badgeFor(pct){
-    if(pct >= 90) return "🌟 Star";
-    if(pct >= 70) return "🏅 Achiever";
-    if(pct >= 50) return "💪 Try-Hard";
-    return "🚀 Starter";
+    if(pct >= 90) return { label:"🌟 Star", avatar:"🦸", title:"Star Hero", sub:"Amazing! Super proud!" };
+    if(pct >= 70) return { label:"🏅 Achiever", avatar:"😎", title:"Achiever", sub:"Great job! Keep shining!" };
+    if(pct >= 50) return { label:"💪 Try-Hard", avatar:"😊", title:"Try-Hard", sub:"Nice effort! One more try?" };
+    return { label:"🚀 Starter", avatar:"🙂", title:"Starter", sub:"Let’s warm up!" };
   }
 
-  function reset(){
-    order = shuffle([...Array(QUESTIONS.length).keys()]);
-    idx = 0;
-    score = 0;
-    answered = false;
-    updateTop();
-    render();
+  function updateBadgeUI(){
+    const pct = Math.round((score/QUESTIONS.length)*100);
+    const b = badgeFor(pct);
+    badgeEl.textContent = b.label;
+    avatar.textContent = b.avatar;
+    avatarTitle.textContent = b.title;
+    avatarSub.textContent = b.sub;
   }
 
   function updateTop(){
@@ -408,8 +480,73 @@
     correctNow.textContent = score;
     scoreBig.textContent = score;
     qNow.textContent = Math.min(idx+1, QUESTIONS.length);
-    const pct = Math.round((score/QUESTIONS.length)*100);
-    badgeEl.textContent = badgeFor(pct);
+    updateBadgeUI();
+  }
+
+  // --- Sound (simple beeps with WebAudio) ---
+  function ensureAudio(){
+    if(!audioCtx){
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    // iOS/Android sometimes needs resume after user interaction
+    if(audioCtx.state === "suspended") audioCtx.resume().catch(()=>{});
+  }
+
+  function beep(type){
+    if(!soundOn) return;
+    ensureAudio();
+
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = "sine";
+
+    // Correct: cheerful 2-step, Wrong: quick low blip
+    if(type === "ok"){
+      osc.frequency.setValueAtTime(740, now);
+      osc.frequency.setValueAtTime(988, now + 0.10);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.25, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 0.24);
+    } else {
+      osc.frequency.setValueAtTime(220, now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.28, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 0.16);
+    }
+  }
+
+  function setSoundUI(){
+    soundIcon.textContent = soundOn ? "🔊" : "🔇";
+    switchEl.classList.toggle("on", soundOn);
+  }
+
+  function toggleSound(){
+    soundOn = !soundOn;
+    localStorage.setItem("svq_sound", soundOn ? "1" : "0");
+    setSoundUI();
+    // Prime audio context on toggle
+    if(soundOn) ensureAudio();
+  }
+
+  soundToggle.addEventListener("click", toggleSound);
+
+  function reset(){
+    order = shuffle([...Array(QUESTIONS.length).keys()]);
+    idx = 0;
+    score = 0;
+    answered = false;
+
+    resultsCard.style.display = "none";
+    quizCard.style.display = "block";
+
+    updateTop();
+    render();
   }
 
   function render(){
@@ -449,7 +586,9 @@
     const ok = (choiceIndex === q.a);
     if(ok) score++;
 
-    // Mark buttons
+    // Sound
+    beep(ok ? "ok" : "no");
+
     const btns = [...choices.querySelectorAll(".choice")];
     btns.forEach((b, i)=>{
       if(i === q.a){
@@ -470,7 +609,7 @@
     feedbackSub.textContent = ok ? "Great job—keep going!" : `Correct answer: ${q.c[q.a]}`;
 
     nextBtn.disabled = false;
-    nextBtn.textContent = (idx === QUESTIONS.length-1) ? "Finish 🎓" : "Next ➜";
+    nextBtn.textContent = (idx === QUESTIONS.length-1) ? "Finish ➜" : "Next ➜";
 
     updateTop();
   }
@@ -483,7 +622,6 @@
     feedbackBox.classList.add("good");
     feedbackTitle.textContent = "Hint 💡";
     feedbackSub.textContent = `Look for: ${q.c[q.a]}`;
-    // Soft highlight
     const btns = [...choices.querySelectorAll(".choice")];
     btns[q.a].style.borderColor = "rgba(238,242,255,.55)";
     btns[q.a].style.background = "rgba(238,242,255,.10)";
@@ -525,87 +663,123 @@
     spawnConfetti();
 
     const pct = Math.round((score/QUESTIONS.length)*100);
-    const badge = badgeFor(pct);
+    const b = badgeFor(pct);
 
-    // Ask for name (once)
-    const name = prompt("🎓 Enter your name for the certificate:", playerName) || playerName;
+    quizCard.style.display = "none";
+    resultsCard.style.display = "block";
+    scoreLine.textContent = `You scored ${score} / ${QUESTIONS.length} (${pct}%) • Badge: ${b.label} ${b.avatar}`;
+  }
+
+  // --- Certificate flow (ask name only when button clicked) ---
+  function openCertificateFlow(){
+    // Prime audio on a user action to avoid browser autoplay restrictions
+    if(soundOn) ensureAudio();
+
+    const suggested = playerName || "";
+    const name = prompt("🎓 Enter your name for the certificate:", suggested);
+    if(!name) return;
+
     playerName = name.trim() ? name.trim() : "Young Champion";
     localStorage.setItem("svq_name", playerName);
 
-    // Show certificate modal
-    drawCertificate({ name: playerName, score, total: QUESTIONS.length, pct, badge });
+    const pct = Math.round((score/QUESTIONS.length)*100);
+    const b = badgeFor(pct);
+
+    drawCertificate({
+      name: playerName,
+      score,
+      total: QUESTIONS.length,
+      pct,
+      badgeLabel: b.label,
+      avatar: b.avatar
+    });
+
     certModal.style.display = "grid";
   }
 
-  function drawCertificate({name, score, total, pct, badge}){
-    // Background
+  // Clean certificate — includes avatar badge, no circular elements
+  function drawCertificate({name, score, total, pct, badgeLabel, avatar}){
     ctx.clearRect(0,0,certCanvas.width, certCanvas.height);
 
-    // Gradient bg
+    // Background gradient
     const g = ctx.createLinearGradient(0,0,certCanvas.width, certCanvas.height);
     g.addColorStop(0, "#0b1020");
     g.addColorStop(1, "#1b2452");
     ctx.fillStyle = g;
     ctx.fillRect(0,0,certCanvas.width, certCanvas.height);
 
-    // Decorative blobs
-    blob(220, 170, 280, "rgba(167,139,250,.40)");
-    blob(1180, 180, 310, "rgba(96,165,250,.35)");
-    blob(1050, 740, 360, "rgba(34,197,94,.22)");
+    // Soft corner glows
+    glow(250, 200, 360, "rgba(167,139,250,.28)");
+    glow(1180, 220, 420, "rgba(96,165,250,.22)");
+    glow(1050, 760, 520, "rgba(34,197,94,.16)");
 
-    // Card
-    roundRect(90, 90, 1220, 720, 34, "rgba(255,255,255,.08)", "rgba(255,255,255,.18)");
+    // Main certificate card
+    roundRect(80, 80, 1240, 740, 34, "rgba(255,255,255,.08)", "rgba(255,255,255,.20)");
+    // Inner border
+    roundRect(110, 110, 1180, 680, 26, "rgba(0,0,0,0)", "rgba(255,255,255,.14)");
 
-    // Title
-    ctx.fillStyle = "rgba(238,242,255,.98)";
-    ctx.font = "900 58px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-    ctx.fillText("Certificate of Completion", 160, 190);
-
-    // Subtitle
-    ctx.fillStyle = "rgba(238,242,255,.78)";
-    ctx.font = "400 26px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-    ctx.fillText("Swami Vivekananda – Fun Kids Quiz", 160, 235);
-
-    // Name
+    // Header
     ctx.fillStyle = "rgba(238,242,255,.98)";
     ctx.font = "900 64px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-    ctx.fillText(name, 160, 340);
+    ctx.fillText("Certificate", 150, 200);
 
-    // Line
-    ctx.strokeStyle = "rgba(255,255,255,.20)";
+    ctx.fillStyle = "rgba(238,242,255,.86)";
+    ctx.font = "700 30px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillText("of Completion", 150, 245);
+
+    ctx.fillStyle = "rgba(238,242,255,.75)";
+    ctx.font = "500 26px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillText("Swami Vivekananda – Fun Kids Quiz", 150, 300);
+
+    // Name
+    ctx.fillStyle = "rgba(238,242,255,.95)";
+    ctx.font = "900 72px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillText(name, 150, 400);
+
+    // Underline
+    ctx.strokeStyle = "rgba(255,255,255,.22)";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(160, 365);
-    ctx.lineTo(1240, 365);
+    ctx.moveTo(150, 420);
+    ctx.lineTo(1250, 420);
     ctx.stroke();
 
-    // Score
-    ctx.fillStyle = "rgba(238,242,255,.92)";
-    ctx.font = "700 34px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-    ctx.fillText(`Score: ${score}/${total}   (${pct}%)`, 160, 440);
-
-    // Badge
+    // Score + badge
+    ctx.fillStyle = "rgba(238,242,255,.90)";
     ctx.font = "800 34px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-    ctx.fillText(`Badge: ${badge}`, 160, 490);
+    ctx.fillText(`Score: ${score}/${total}  (${pct}%)`, 150, 500);
+
+    ctx.font = "700 30px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillText(`Badge: ${badgeLabel} ${avatar}`, 150, 550);
 
     // Quote
     ctx.fillStyle = "rgba(238,242,255,.78)";
     ctx.font = "500 26px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-    ctx.fillText("“Arise, awake, and stop not till the goal is reached.”", 160, 570);
+    ctx.fillText("“Arise, awake, and stop not till the goal is reached.”", 150, 635);
 
-    // Footer
+    // Date
     const dateStr = new Date().toLocaleDateString(undefined, { year:"numeric", month:"short", day:"numeric" });
     ctx.fillStyle = "rgba(238,242,255,.70)";
     ctx.font = "500 22px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-    ctx.fillText(`Date: ${dateStr}`, 160, 650);
+    ctx.fillText(`Date: ${dateStr}`, 150, 715);
 
-    // Seal
-    seal(1080, 545, 135, badge, pct);
+    // Right-side rectangular badge card (with avatar)
+    roundRect(960, 500, 290, 210, 22, "rgba(255,255,255,.07)", "rgba(255,255,255,.18)");
+    ctx.textAlign = "center";
+    ctx.fillStyle = "rgba(238,242,255,.95)";
+    ctx.font = "900 44px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillText(avatar, 1105, 575);
+    ctx.font = "900 34px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillText(`${pct}%`, 1105, 625);
+    ctx.fillStyle = "rgba(238,242,255,.80)";
+    ctx.font = "700 20px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillText("QUIZ BADGE", 1105, 665);
+    ctx.textAlign = "left";
 
-    // Small note
+    // Footer note
     ctx.fillStyle = "rgba(238,242,255,.55)";
     ctx.font = "500 18px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-    ctx.fillText("Generated by your class quiz app • Share & celebrate learning!", 160, 720);
+    ctx.fillText("Generated by your class quiz app • Share & celebrate learning!", 150, 780);
   }
 
   function roundRect(x,y,w,h,r,fill,stroke){
@@ -616,42 +790,14 @@
     ctx.arcTo(x,y+h,x,y,r);
     ctx.arcTo(x,y,x+w,y,r);
     ctx.closePath();
-    if(fill){ ctx.fillStyle = fill; ctx.fill(); }
+    if(fill && fill!=="rgba(0,0,0,0)"){ ctx.fillStyle = fill; ctx.fill(); }
     if(stroke){ ctx.strokeStyle = stroke; ctx.lineWidth = 2; ctx.stroke(); }
   }
-
-  function blob(cx,cy,rad,color){
+  function glow(cx,cy,rad,color){
     ctx.fillStyle = color;
     ctx.beginPath();
     ctx.ellipse(cx,cy,rad,rad*0.8, 0, 0, Math.PI*2);
     ctx.fill();
-  }
-
-  function seal(cx,cy,r, badge, pct){
-    // outer ring
-    ctx.beginPath();
-    ctx.arc(cx,cy,r,0,Math.PI*2);
-    ctx.fillStyle = "rgba(167,139,250,.22)";
-    ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,.20)";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // inner
-    ctx.beginPath();
-    ctx.arc(cx,cy,r*0.72,0,Math.PI*2);
-    ctx.fillStyle = "rgba(255,255,255,.08)";
-    ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,.18)";
-    ctx.stroke();
-
-    ctx.fillStyle = "rgba(238,242,255,.95)";
-    ctx.font = "900 30px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-    ctx.textAlign = "center";
-    ctx.fillText("QUIZ", cx, cy-10);
-    ctx.font = "800 26px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-    ctx.fillText(`${pct}%`, cx, cy+26);
-    ctx.textAlign = "left";
   }
 
   function dataURLToBlob(dataURL){
@@ -664,11 +810,17 @@
     return new Blob([u8], {type:mime});
   }
 
+  function downloadCertificate(){
+    const link = document.createElement("a");
+    link.download = "Vivekananda-Quiz-Certificate.png";
+    link.href = certCanvas.toDataURL("image/png");
+    link.click();
+  }
+
   async function shareCertificate(){
     const dataURL = certCanvas.toDataURL("image/png");
     const blob = dataURLToBlob(dataURL);
     const file = new File([blob], "Vivekananda-Quiz-Certificate.png", { type:"image/png" });
-
     const shareText = `I scored ${score}/${QUESTIONS.length} in the Swami Vivekananda Quiz! 🎉`;
 
     if(navigator.share && navigator.canShare && navigator.canShare({ files:[file] })){
@@ -678,17 +830,9 @@
         files: [file]
       });
     } else {
-      // Fallback: download if share not supported
       downloadCertificate();
-      alert("Sharing isn’t supported on this phone/browser. I downloaded the certificate instead ✅");
+      alert("Sharing isn’t supported on this phone/browser. Downloaded the certificate instead ✅");
     }
-  }
-
-  function downloadCertificate(){
-    const link = document.createElement("a");
-    link.download = "Vivekananda-Quiz-Certificate.png";
-    link.href = certCanvas.toDataURL("image/png");
-    link.click();
   }
 
   // Events
@@ -696,16 +840,26 @@
   restartBtn.addEventListener("click", reset);
   hintBtn.addEventListener("click", hint);
 
-  closeCert.addEventListener("click", ()=>{ certModal.style.display = "none"; reset(); });
+  playAgainBtn.addEventListener("click", reset);
+  getCertBtn.addEventListener("click", openCertificateFlow);
+
+  closeCert.addEventListener("click", ()=>{ certModal.style.display = "none"; });
   downloadCert.addEventListener("click", downloadCertificate);
   shareCert.addEventListener("click", ()=>shareCertificate().catch(()=>{}));
   editNameBtn.addEventListener("click", ()=>{
-    const name = prompt("Enter name for certificate:", playerName) || playerName;
+    const name = prompt("Enter name for certificate:", playerName || "");
+    if(!name) return;
     playerName = name.trim() ? name.trim() : "Young Champion";
     localStorage.setItem("svq_name", playerName);
+
     const pct = Math.round((score/QUESTIONS.length)*100);
-    drawCertificate({ name: playerName, score, total: QUESTIONS.length, pct, badge: badgeFor(pct) });
+    const b = badgeFor(pct);
+    drawCertificate({ name: playerName, score, total: QUESTIONS.length, pct, badgeLabel: b.label, avatar: b.avatar });
   });
+
+  // Init UI state
+  setSoundUI();
+  updateBadgeUI();
 
   // Start
   reset();
